@@ -1,4 +1,4 @@
-//For each product and month show the total sales for cust = "Emily"
+//For each product and month show the total sales for cust = "Emily" and total sales for all customers
 
 select_attribute:prod, month, 1_sum_quant, 2_sum_quant
 
