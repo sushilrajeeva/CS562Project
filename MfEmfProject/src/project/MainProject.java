@@ -15,7 +15,7 @@ import java.util.Scanner;
 public class MainProject {
 
     // Declaring the DataStructures for phi operator
-    //Narmit - Creating Variables to hold data of input file
+    // Narmit - Creating Variables to hold data of input file
 
     //Stores the Select attributes
     private static List<String> select = new ArrayList<String>();
@@ -140,7 +140,7 @@ public class MainProject {
      * @param having_condition
      */
 
-    //Sushil - logic for storing input file data in user defined java variables
+    // Narmit - logic for storing input file data in user defined java variables
     private static void getArguments(String[] select_attributes, String[] grouping_atributes, String[] fvect,
                                      String[] select_condition, int noGV, String[] where, String[] having_condition) {
 

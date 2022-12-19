@@ -69,7 +69,7 @@ public class MFCodeGenerator {
             writer.print("\n\t /** \n\t *  Selection attributes \n\t */ \n");
             MainProject mainProject = new MainProject();
 
-            // Sushil - Class Result
+            // Narmit - Class Result
             writer.print("\n\t /** \n\t *  This result set class stores only the attributes in selection attribute \n\t */ \n");
             writer.print("\tpublic class Result{\n");
             for (String str : mainProject.getSelect()) {
@@ -81,11 +81,11 @@ public class MFCodeGenerator {
             }
             writer.print("\t}\n");
 
-            //Sushil - generate f-vect and groupby attributes
+            // Narmit - generate f-vect and groupby attributes
             writer.print("\n\t /** \n\t * f-vect attributes \n\t * and group by attribues \n\t */ \n");
             List<String> added_elements = new ArrayList<String>();
 
-            // Sushil - Class MF_Structure
+            // Narmit - Class MF_Structure
             writer.print("\n\t /** \n\t * Contains all the required attributes that needs to be computed \n\t */ \n");
             writer.print("\tpublic class MF_Structure{\n");
             //writing logic for creating [datatype groupByVariableName] for each groupby in groupbyList
@@ -151,38 +151,38 @@ public class MFCodeGenerator {
             writer.print("\tpublic void retrive(){\n");
             writer.print("\t\ttry {\n");
             writer.print("\t\t\tConnection connection = DriverManager.getConnection(url, username, password);\n");
-            // Declaring variables
+            //Sushil - Declaring variables
             writer.print("\t\t\tResultSet result_set;\n");
             writer.print("\t\t\tboolean isNext;\n");
             writer.print("\t\t\tStatement statement = connection.createStatement();\n");
             writer.print("\t\t\tString query = \"select * from sales\";\n");
             writer.print("\n");
-            //using AlgorithmMFLoop Funciton which contains the main logic for filtering the retrived data according to MF Query condition
+            //Sushil - using AlgorithmMFLoop Funciton which contains the main logic for filtering the retrived data according to MF Query condition
             AlgorithmMFLoop(writer, mainProject, dataType);
             writer.print("\t\t}catch(Exception exception) {\n");
             writer.print("\t\t\texception.printStackTrace();\n");
             writer.print("\t\t}\n");
             writer.print("\t}\n");
-            // Create compare Methods to check
+            //Sushil -  Create compare Methods to check
             writer.print(
                     "\n\t /** \n\t * These are comapare methods to compare two string values orinteger values. \n\t * @return boolean true if same or else false. \n\t */ \n");
             writer.print("\tboolean compare(String str1, String str2){\n");
             writer.print("\t\treturn str1.equals(str2);\n\t}\n");
             writer.print("\tboolean compare(int num1, int num2){\n");
             writer.print("\t\treturn (num1 == num2);\n\t}\n");
-            // Create addToOutput to build result
+            //Sushil - Create addToOutput to build result
             writer.print("\n\t /** \n\t * filtering output data if having conditions exists. \n\t */ \n");
             writer.print("\tpublic void addToOutput(){\n");
             writer.print("\t\tfor(MF_Structure mfStructure: mfStructureList){\n");
             writer.print("\t\t\tResult result = new Result();\n");
             for (String str : mainProject.getGroupby())
                 writer.print("\t\t\t\tresult." + str + " = mfStructure." + str + ";\n");
-            //Narmit - handling if having condition is false
+            // Sushil - handling if having condition is false
             writer.print("\t\t\tif(");
-            // Declaring variable to set to true if the second having condition exists
+            //Sushil - Declaring variable to set to true if the second having condition exists
             boolean isSecondHaving = false;
 
-            //Narmit -  Putting the having condition in the output file for filtering the output.
+            // Sushil -  Putting the having condition in the output file for filtering the output.
             if (mainProject.getSizeHaving() != 0) {
                 for (String str : mainProject.getHaving()) {
                     if (str.contains("sum"))
@@ -204,7 +204,7 @@ public class MFCodeGenerator {
                         writer.print(" && (" + str + ")");
                 }
             }
-            //Narmit -  If there is no having condition put "true".
+            // Sushil -  If there is no having condition put "true".
             else
                 writer.print("true");
             writer.print("){\n");
@@ -283,12 +283,13 @@ public class MFCodeGenerator {
      * @param mainProject
      * @param dataType
      */
+    //Sushil
     private static void AlgorithmMFLoop(PrintWriter writer, MainProject mainProject, HashMap<String, String> dataType) {
         // TODO Auto-generated method stub
         List<String> added_elements = new ArrayList<String>();
         List<String> updated_elements = new ArrayList<String>();
 
-        // Generating number of while loops equal to number of Grouping variables.
+        //Sushil - Generating number of while loops equal to number of Grouping variables.
         writer.print("\n\t\t\t /** \n\t\t\t * Generating while loops for each grouping variable. \n\t\t\t */ \n");
         for (int i = 0; i < mainProject.getNumber(); i++) {
             writer.print("\n\t\t\t//While loop for grouping variable " + (i + 1) + ".\n");
@@ -365,7 +366,7 @@ public class MFCodeGenerator {
             }
             writer.print("){\n");
 
-            // Putting the such that conditions if any.
+            //Sushil - Putting the such that conditions if any.
             not = false;
             writer.print("\t\t\t\t\tif (");
             for (SuchThat such_that : mainProject.getSuchthat()) {
@@ -423,7 +424,7 @@ public class MFCodeGenerator {
 
             writer.print("\t\t\t\t\t\t\t\tfound = true;\n");
 
-            // Outputting the aggregate functions if record is added already.
+            // Sushil - Outputting the aggregate functions if record is added already. then we simply access the element and update the element
             for (GroupVariable gv : mainProject.getFvect()) {
                 if (Integer.parseInt(gv.index) == i + 1) {
                     if (gv.aggregate.equals("avg")) {
@@ -472,7 +473,7 @@ public class MFCodeGenerator {
 
             writer.print("\t\t\t\t\t\t\t}\n");
             writer.print("\t\t\t\t\t\t}\n");
-            // If record is found for the first time - i.e no record in mfStructureList
+            //Sushil - If record is found for the first time - i.e no record in mfStructureList then we assign the values to the current row and add it to the mfStructureList
             writer.print("\t\t\t\t\t\tif(found == false){\n");
             writer.print("\t\t\t\t\t\t\tMF_Structure addCurrentRow = new MF_Structure();\n");
             for (String str : mainProject.getGroupby()) {
