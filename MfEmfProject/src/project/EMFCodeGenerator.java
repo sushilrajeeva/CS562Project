@@ -104,16 +104,16 @@ public class EMFCodeGenerator {
                             + "/count_" + value.attribute + "_" + value.index + "));\n");
                 } else if (value.aggregate.equals("max")) {
                     writer.print("\t\tif (" + value.getString() + " == 0)\n");
-                    writer.print("\t\t\tSystem.out.printf(\"\\t \"+"+ "+formatName("+ 0 +")"+");\n");
+                    writer.print("\t\t\tSystem.out.printf(\"\\t \""+ "+formatName("+ 0 +")"+");\n");
                     writer.print("\t\telse\n");
-                    writer.print("\t\t\tSystem.out.printf(\"\\t\"+" + "+formatName(" +value.getString() +")" + ");\n");
+                    writer.print("\t\t\tSystem.out.printf(\"\\t\"" + "+formatName(" +value.getString() +")" + ");\n");
                 } else if (value.aggregate.equals("min")) {
                     writer.print("\t\tif (" + value.getString() + " == Integer.MAX_VALUE)\n");
-                    writer.print("\t\t\tSystem.out.printf(\"\\t \"+"+ "+formatName("+ 0 +")"+");\n");
+                    writer.print("\t\t\tSystem.out.printf(\"\\t \""+ "+formatName("+ 0 +")"+");\n");
                     writer.print("\t\telse\n");
-                    writer.print("\t\t\tSystem.out.printf(\"\\t\"+" + "+formatName(" +value.getString() +")" + ");\n");
+                    writer.print("\t\t\tSystem.out.printf(\"\\t\"" + "+formatName(" +value.getString() +")" + ");\n");
                 } else
-                    writer.print("\t\t\tSystem.out.printf(\"\\t\"+" + "+formatName(" +value.getString() +")" + ");\n");
+                    writer.print("\t\t\tSystem.out.printf(\"\\t\"" + "+formatName(" +value.getString() +")" + ");\n");
             }
             writer.print("\t\tSystem.out.printf(\"\\n\");\n");
             writer.print("\t}\n");

@@ -28,14 +28,19 @@ public class MFOutput {
 	}
 
 	 /** 
-	 *  Selection attributes hi 
+	 *  Selection attributes 
 	 */ 
 
 	 /** 
 	 *  This result set class stores only the attributes in selection attribute 
 	 */ 
 	public class Result{
+		String prod;
 		String cust;
+		int sum_quant_1;
+		int sum_quant_2;
+		int sum_quant_3;
+		int count_quant_3;
 		int avg_quant_1;
 		int avg_quant_2;
 		int avg_quant_3;
@@ -50,6 +55,7 @@ public class MFOutput {
 	 * Contains all the required attributes that needs to be computed 
 	 */ 
 	public class MF_Structure{
+		String prod;
 		String cust;
 		int sum_quant_1;
 		int count_quant_1;
@@ -121,7 +127,7 @@ public class MFOutput {
 					if (currentRow.state.equals("NY")){
 						boolean found = false;
 						for(MF_Structure row: mfStructureList){
-							if(compare(row.cust,currentRow.cust)){
+							if(compare(row.prod,currentRow.prod) && compare(row.cust,currentRow.cust)){
 								found = true;
 								row.sum_quant_1 += currentRow.quant;
 								row.count_quant_1 ++;
@@ -132,6 +138,7 @@ public class MFOutput {
 						}
 						if(found == false){
 							MF_Structure addCurrentRow = new MF_Structure();
+							addCurrentRow.prod = currentRow.prod;
 							addCurrentRow.cust = currentRow.cust;
 							addCurrentRow.sum_quant_1 = currentRow.quant;
 							addCurrentRow.count_quant_1++;
@@ -161,7 +168,7 @@ public class MFOutput {
 					if (currentRow.state.equals("NJ")){
 						boolean found = false;
 						for(MF_Structure row: mfStructureList){
-							if(compare(row.cust,currentRow.cust)){
+							if(compare(row.prod,currentRow.prod) && compare(row.cust,currentRow.cust)){
 								found = true;
 								row.sum_quant_2 += currentRow.quant;
 								row.count_quant_2 ++;
@@ -172,6 +179,7 @@ public class MFOutput {
 						}
 						if(found == false){
 							MF_Structure addCurrentRow = new MF_Structure();
+							addCurrentRow.prod = currentRow.prod;
 							addCurrentRow.cust = currentRow.cust;
 							addCurrentRow.sum_quant_2 = currentRow.quant;
 							addCurrentRow.count_quant_2++;
@@ -201,7 +209,7 @@ public class MFOutput {
 					if (currentRow.state.equals("CT")){
 						boolean found = false;
 						for(MF_Structure row: mfStructureList){
-							if(compare(row.cust,currentRow.cust)){
+							if(compare(row.prod,currentRow.prod) && compare(row.cust,currentRow.cust)){
 								found = true;
 								row.sum_quant_3 += currentRow.quant;
 								row.count_quant_3 ++;
@@ -212,6 +220,7 @@ public class MFOutput {
 						}
 						if(found == false){
 							MF_Structure addCurrentRow = new MF_Structure();
+							addCurrentRow.prod = currentRow.prod;
 							addCurrentRow.cust = currentRow.cust;
 							addCurrentRow.sum_quant_3 = currentRow.quant;
 							addCurrentRow.count_quant_3++;
@@ -246,8 +255,13 @@ public class MFOutput {
 	public void addToOutput(){
 		for(MF_Structure mfStructure: mfStructureList){
 			Result result = new Result();
+				result.prod = mfStructure.prod;
 				result.cust = mfStructure.cust;
-			if(true){
+			if((mfStructure.avg_quant_1 < 2 * mfStructure.avg_quant_2) && (mfStructure.avg_quant_1 < 2 * mfStructure.avg_quant_2) && (mfStructure.avg_quant_1 < mfStructure.avg_quant_3)){
+				result.sum_quant_1 = mfStructure.sum_quant_1;
+				result.sum_quant_2 = mfStructure.sum_quant_2;
+				result.sum_quant_3 = mfStructure.sum_quant_3;
+				result.count_quant_3 = mfStructure.count_quant_3;
 				result.avg_quant_1 = mfStructure.avg_quant_1;
 				result.avg_quant_2 = mfStructure.avg_quant_2;
 				result.avg_quant_3 = mfStructure.avg_quant_3;
@@ -260,15 +274,25 @@ public class MFOutput {
 	 * This method will create format for outputting the data table. 
 	 */ 
 	public void outputTable(){
+		System.out.printf("%-4s","prod\t");
 		System.out.printf("%-4s","cust\t");
+		System.out.printf("%-11s","sum_quant_1\t");
+		System.out.printf("%-11s","sum_quant_2\t");
+		System.out.printf("%-11s","sum_quant_3\t");
+		System.out.printf("%-13s","count_quant_3\t");
 		System.out.printf("%-11s","avg_quant_1\t");
 		System.out.printf("%-11s","avg_quant_2\t");
 		System.out.printf("%-11s","avg_quant_3\t");
 		System.out.printf("\n");
-		System.out.printf("====\t===========\t===========\t===========\t ");
+		System.out.printf("====\t====\t===========\t===========\t===========\t=============\t===========\t===========\t===========\t ");
 		for(Result result: outputAttributeList){
 			System.out.printf("\n");
+			System.out.printf("%-4s\t", result.prod);
 			System.out.printf("%-4s\t", result.cust);
+			System.out.printf("%11s\t", result.sum_quant_1);
+			System.out.printf("%11s\t", result.sum_quant_2);
+			System.out.printf("%11s\t", result.sum_quant_3);
+			System.out.printf("%13s\t", result.count_quant_3);
 			System.out.printf("%11s\t", result.avg_quant_1);
 			System.out.printf("%11s\t", result.avg_quant_2);
 			System.out.printf("%11s\t", result.avg_quant_3);

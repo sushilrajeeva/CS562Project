@@ -21,19 +21,10 @@ class dbTuple{
 }
 
 class MF_structure{
-	String	cust;
+	String	prod;
+	int	month;
 	int	sum_quant_1;
-	int	count_quant_1;
-	int	avg_quant_1;
 	int	sum_quant_2;
-	int	count_quant_2;
-	int	avg_quant_2;
-	int	sum_quant_3;
-	int	count_quant_3;
-	int	avg_quant_3;
-	int	sum_quant_4;
-	int	count_quant_4;
-	int	avg_quant_4;
 	String formatName(String name){
 		Integer maxLen = 20;
 		Integer len = name.length();
@@ -54,23 +45,10 @@ class MF_structure{
 		 return numStr + "  |";
 }
 	void output(){
-		System.out.printf("\t"+formatName(cust));
-		if (count_quant_1 == 0)
-			System.out.printf("\t "+formatName(0));
-		else
-			System.out.printf("\t"+formatName(sum_quant_1/count_quant_1));
-		if (count_quant_2 == 0)
-			System.out.printf("\t "+formatName(0));
-		else
-			System.out.printf("\t"+formatName(sum_quant_2/count_quant_2));
-		if (count_quant_3 == 0)
-			System.out.printf("\t "+formatName(0));
-		else
-			System.out.printf("\t"+formatName(sum_quant_3/count_quant_3));
-		if (count_quant_4 == 0)
-			System.out.printf("\t "+formatName(0));
-		else
-			System.out.printf("\t"+formatName(sum_quant_4/count_quant_4));
+		System.out.printf("\t"+formatName(prod));
+		System.out.printf("\t"+formatName(month));
+			System.out.printf("\t"+formatName(sum_quant_1));
+			System.out.printf("\t"+formatName(sum_quant_2));
 		System.out.printf("\n");
 	}
 }
@@ -81,13 +59,7 @@ class EMFOutput {
 	String url = "jdbc:postgresql://localhost:5432/salesdb";
 	ArrayList<MF_structure> result_list = new ArrayList<MF_structure>();
 	int	sum_quant_1 = 0;
-	int	count_quant_1 = 0;
 	int	sum_quant_2 = 0;
-	int	count_quant_2 = 0;
-	int	sum_quant_3 = 0;
-	int	count_quant_3 = 0;
-	int	sum_quant_4 = 0;
-	int	count_quant_4 = 0;
 
 	public static void main(String[] args) {
 		EMFOutput emf = new EMFOutput();
@@ -128,32 +100,21 @@ class EMFOutput {
 			nextrow.day = rs.getInt("day");
 			nextrow.cust = rs.getString("cust");
 			sum_quant_1 += nextrow.quant;
-			count_quant_1 ++;
 			sum_quant_2 += nextrow.quant;
-			count_quant_2 ++;
-			sum_quant_3 += nextrow.quant;
-			count_quant_3 ++;
-			sum_quant_4 += nextrow.quant;
-			count_quant_4 ++;
-			if(nextrow.year==2016){
+			if(true){
 				boolean found = false;
 				for (MF_structure temp : result_list){
-					 if(compare(temp.cust,nextrow.cust)){
+					 if(compare(temp.prod,nextrow.prod) && compare(temp.month,nextrow.month)){
 						found=true;
 						break;
 					}
 				}
 				if (found == false){
 					MF_structure newrow = new MF_structure();
-					newrow.cust = nextrow.cust;
+					newrow.prod = nextrow.prod;
+					newrow.month = nextrow.month;
 					newrow.sum_quant_1 = 0;
-					newrow.count_quant_1 = 0;
 					newrow.sum_quant_2 = 0;
-					newrow.count_quant_2 = 0;
-					newrow.sum_quant_3 = 0;
-					newrow.count_quant_3 = 0;
-					newrow.sum_quant_4 = 0;
-					newrow.count_quant_4 = 0;
 					result_list.add(newrow);
 				}
 			}
@@ -171,11 +132,10 @@ class EMFOutput {
 			nextrow.quant = rs.getInt("quant");
 			nextrow.day = rs.getInt("day");
 			nextrow.cust = rs.getString("cust");
-			if(nextrow.year==2016){
+			if(true){
 				for (MF_structure temp : result_list){
-					if (nextrow.cust.equals(temp.cust)&&nextrow.state.equals("NY")){
+					if (nextrow.prod.equals(temp.prod)&&nextrow.month==temp.month){
 						temp.sum_quant_1 += nextrow.quant;
-						temp.count_quant_1 ++;
 					}
 				}
 			}
@@ -193,55 +153,10 @@ class EMFOutput {
 			nextrow.quant = rs.getInt("quant");
 			nextrow.day = rs.getInt("day");
 			nextrow.cust = rs.getString("cust");
-			if(nextrow.year==2016){
+			if(true){
 				for (MF_structure temp : result_list){
-					if (nextrow.cust.equals(temp.cust)&&nextrow.state.equals("NJ")){
+					if (nextrow.prod.equals(temp.prod)&&nextrow.month==temp.month){
 						temp.sum_quant_2 += nextrow.quant;
-						temp.count_quant_2 ++;
-					}
-				}
-			}
-			more=rs.next();
-		}
-
-		rs = st.executeQuery(ret);
-		more=rs.next();
-		while(more){
-			dbTuple nextrow = new dbTuple();
-			nextrow.prod = rs.getString("prod");
-			nextrow.month = rs.getInt("month");
-			nextrow.year = rs.getInt("year");
-			nextrow.state = rs.getString("state");
-			nextrow.quant = rs.getInt("quant");
-			nextrow.day = rs.getInt("day");
-			nextrow.cust = rs.getString("cust");
-			if(nextrow.year==2016){
-				for (MF_structure temp : result_list){
-					if (nextrow.cust.equals(temp.cust)&&nextrow.state.equals("CT")){
-						temp.sum_quant_3 += nextrow.quant;
-						temp.count_quant_3 ++;
-					}
-				}
-			}
-			more=rs.next();
-		}
-
-		rs = st.executeQuery(ret);
-		more=rs.next();
-		while(more){
-			dbTuple nextrow = new dbTuple();
-			nextrow.prod = rs.getString("prod");
-			nextrow.month = rs.getInt("month");
-			nextrow.year = rs.getInt("year");
-			nextrow.state = rs.getString("state");
-			nextrow.quant = rs.getInt("quant");
-			nextrow.day = rs.getInt("day");
-			nextrow.cust = rs.getString("cust");
-			if(nextrow.year==2016){
-				for (MF_structure temp : result_list){
-					if (nextrow.cust.equals(temp.cust)){
-						temp.sum_quant_4 += nextrow.quant;
-						temp.count_quant_4 ++;
 					}
 				}
 			}

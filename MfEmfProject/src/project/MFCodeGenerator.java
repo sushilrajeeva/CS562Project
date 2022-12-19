@@ -94,7 +94,7 @@ public class MFCodeGenerator {
                     if (groupByItem.equals(entry.getKey()))
                         writer.print("\t\t" + entry.getValue() + " " + entry.getKey() + ";\n");
             }
-            //writing logic to handle avg - sum - count and creating variable names for the same
+            //Sushil - writing logic to handle avg - sum - count and creating variable names for the same
             for (GroupVariable groupVariable : mainProject.getFvect()) {
                 if (groupVariable.aggregate.equals("avg")) {
                     String sum = "sum_" + groupVariable.attribute + "_" + groupVariable.index;

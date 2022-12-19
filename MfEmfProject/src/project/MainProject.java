@@ -301,7 +301,7 @@ public class MainProject {
                 System.out.println();
             } else if (query.equals("EMF")) {
                 System.out.println("You have selected EMF Compiler!");
-                input = new File("Inputs/EMFQuery1.txt");
+                input = new File("Inputs/EMFQuery2.txt");
                 //calls addPhiArguments to take care the logic of populating input file variable values to its respective java variables
                 mainProject.addPhiArguments(input);
 
