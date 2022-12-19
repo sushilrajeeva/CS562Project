@@ -57,7 +57,7 @@ public class MFCodeGenerator {
             writer.print("\tList<Result> outputAttributeList = new ArrayList<Result>();\n");
 
             writer.print("\n");
-            // Generate DataBase Structure of sales table
+            // Generate DataBase Structure class of sales table
             writer.print("\t /** \n\t * This class contains the DB schema \n\t */ \n");
             writer.print("\tpublic class DB_Structure{\n");
             for (Map.Entry<String, String> entry : dataType.entrySet())
@@ -66,7 +66,7 @@ public class MFCodeGenerator {
             writer.print("\t}\n");
 
             // Generating select attributes
-            writer.print("\n\t /** \n\t *  Selection attributes hi \n\t */ \n");
+            writer.print("\n\t /** \n\t *  Selection attributes \n\t */ \n");
             MainProject mainProject = new MainProject();
 
             // Sushil - Class Result
