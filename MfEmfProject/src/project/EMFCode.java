@@ -13,8 +13,7 @@ public class EMFCode {
         try {
 
             Main_class mc = new Main_class();
-//				File output= new File("/Users/devilabakrania/git/cs562/562project/src/project/EMFOp.java");
-            File output = new File("/Users/vyom/git/cs562/562project/src/project/EMFOp.java");
+            File output = new File("src/project/EMFOp.java");
             PrintWriter writer = new PrintWriter(output);
 
             writer.print("package project;\n");
@@ -81,9 +80,9 @@ public class EMFCode {
 
             // Output main class
             writer.print("class EMFOutput {\n");
-            writer.print("\tString usr =\"postgres\";\n");
-            writer.print("\tString pwd =\"1234\";\n");
-            writer.print("\tString url = \"jdbc:postgresql://localhost/project\";\n");
+            writer.print("\tString username =\"postgres\";\n");
+            writer.print("\tString password =\"CS562\";\n");
+            writer.print("\tString url = \"jdbc:postgresql://localhost:5432/salesdb\";\n");
             // private static final String url="jdbc:postgres://localhost:51314/project";
             writer.print("\tArrayList<MF_structure> result_list = new ArrayList<MF_structure>();\n");
 
@@ -104,8 +103,17 @@ public class EMFCode {
             writer.print("\n\tpublic static void main(String[] args) {\n");
             writer.print("\t\tEMFOutput emf = new EMFOutput();\n");
             writer.print("\t\temf.connect();\n");
+
+            //Logic to compute our program execution time
+            writer.print("\t\tlong start = System.currentTimeMillis();\n");
             writer.print("\t\temf.retrieve();\n");
-            writer.print("\t\temf.output();\n\t}\n");
+            writer.print("\t\temf.output();\n");
+            writer.print("\t\tlong end = System.currentTimeMillis();\n");
+            writer.print("\t\tlong time = end-start;\n");
+            writer.print("\t\tSystem.out.println();\n");
+            writer.print("\t\tSystem.out.println(\"Time taken in milliseconds : \" + time);\n");
+            writer.print("\t}\n");
+
 
             writer.print("\tpublic void connect(){\n");
             writer.print("\t\ttry {\n");
@@ -140,7 +148,7 @@ public class EMFCode {
         Main_class mc = new Main_class();
         writer.print("\tvoid retrieve(){\n");
         writer.print("\t\ttry {\n");
-        writer.print("\t\tConnection con = DriverManager.getConnection(url, usr, pwd);\n");
+        writer.print("\t\tConnection con = DriverManager.getConnection(url, username, password);\n");
         writer.print("\t\tSystem.out.println(\"Success connecting server!\");\n");
         writer.print("\t\tResultSet rs;\n");
         writer.print("\t\tboolean more;\n");

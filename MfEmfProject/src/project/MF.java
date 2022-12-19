@@ -72,11 +72,16 @@ public class MF {
 		} catch(Exception exception) {
 		exception.printStackTrace();
 		}
+		long start = System.currentTimeMillis();
 		mf.retrive();
 
 		mf.addToOutput();
 
 		mf.outputTable();
+		long end = System.currentTimeMillis();
+		long time = end-start;
+		System.out.println();
+		System.out.println("Time taken in milliseconds : " + time);
 	}
 
 	 /** 
@@ -242,6 +247,7 @@ public class MF {
 	 * This method will create format for outputting the data table. 
 	 */ 
 	public void outputTable(){
+		System.out.println("MF Query 4");
 		System.out.printf("%-4s","cust\t");
 		System.out.printf("%-4s","prod\t");
 		System.out.printf("%-11s","sum_quant_1\t");

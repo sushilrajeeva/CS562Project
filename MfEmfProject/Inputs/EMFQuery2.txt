@@ -1,0 +1,14 @@
+//For each product and for sales of 1997, show each month's total sales as percentage of the year-long total sales.
+
+
+select_attribute:prod, month, 1_sum_quant, 2_sum_quant
+
+where:
+
+grouping_attributes:prod, month
+
+no_gv:2
+
+fvect:1_sum_quant, 2_sum_quant
+
+select:1_nextrow.prod.equals(temp.prod), 1_nextrow.month==temp.month, 2_nextrow.prod.equals(temp.prod), 2_nextrow.month==temp.month

@@ -11,6 +11,7 @@ import java.util.Scanner;
 public class Main_class {
 
     // Declaring the DataStructures for phi operator
+    //Narmit - Creating Variables to hold data of input file
     public static HashMap<String, String> dataType = new HashMap<String, String>();
 
     //Stores the Select attributes
@@ -35,7 +36,7 @@ public class Main_class {
     private static List<String> where_condition = new ArrayList<String>();
 
     // Testing if we can connect to PostgreSQL
-    private void connect() {
+    private void connect() { //Narmit - to establish connection
         try {
             Class.forName("org.postgresql.Driver");
             System.out.println("Driver connected successfully!");
@@ -51,7 +52,7 @@ public class Main_class {
      *
      * @param input
      */
-    public void addArguments(File input) {
+    public void addArguments(File input) { // Narmit - handles logic of taking input file data and storing it in our userdefined java variables
 
         //adding try catch for handling errors
         try {
@@ -134,6 +135,7 @@ public class Main_class {
      * @param having_condition
      */
 
+    //Sushil - logic for storing data in user defined java variables
     private static void getArguments(String[] select_attributes, String[] grouping_atributes, String[] fvect,
                                      String[] select_condition, int noGV, String[] where, String[] having_condition) {
 
@@ -182,6 +184,7 @@ public class Main_class {
 
     }
 
+    // Sushil
     public List<String> getSelect() {
         return select;
     }
@@ -218,6 +221,7 @@ public class Main_class {
         return having.size();
     }
 
+    //Sushil - scan the file and print the java data variables
     public static void main(String args[]) {
         File input;
         Main_class code = new Main_class();
@@ -295,16 +299,14 @@ public class Main_class {
                 System.out.println("Fvect");
 
                 System.out.print("[");
-                for (GroupVariable ak : code.getFvect()) {
-                    System.out.print(ak.getString() + " ");
+                for (GroupVariable groupVariable : code.getFvect()) {
+                    System.out.print(groupVariable.getString() + " ");
                 }
                 System.out.print("]\n");
                 System.out.println("SuchThat");
 
-                System.out.println(code.getSuchthat());
-
                 for (SuchThat ak : code.getSuchthat()) {
-                    System.out.print(ak.toString());
+                    System.out.print(ak.getIndex()+ "_" +ak.getAttribute());
                 }
                 System.out.println("\n");
 
@@ -345,6 +347,7 @@ public class Main_class {
 /* Converts the Grouping Variables in form 1_abc_xyz to abc_xyz_1
    This is because our input file has it in this form but it is a bad java variable name so we are transforming it.
  */
+//Narmit - Logic for renaming input variables and also extracting index, aggregate and attributes of each input variables from input file
 class GroupVariable {
 
     String aggregate, attribute, index;
@@ -361,6 +364,7 @@ class GroupVariable {
 }
 
 //This class creates a SuchThat object that tracks the index and attribute also provides setter and getter for the same
+//Sushil - handling Such That elements
 class SuchThat {
 
     public int index;

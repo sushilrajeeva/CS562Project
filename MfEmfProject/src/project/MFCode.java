@@ -20,16 +20,18 @@ public class MFCode {
      */
     public static void codeMF(HashMap<String, String> dataType) {
         try {
+            //Narmit
             //Writing logic to create a file
             File output = new File("src/project/MF.java");
             System.out.println("New MF Output file generated successfully!!");
             PrintWriter writer = new PrintWriter(output);
 
-            //Writing SQL Connection logic
+
+            //Narmit - Writing SQL Connection logic
             writer.print("package project;\n");
             writer.print("import java.sql.*;\n");
             writer.print("import java.util.*;\n");
-            // creating main class
+            //Narmit - creating main class
             writer.print("public class MF {\n");
             writer.print("\t//Variables to connect to DB\n");
             writer.print("\tprivate static final String usr = \"postgres\";\n"
@@ -52,7 +54,7 @@ public class MFCode {
             writer.print("\n\t /** \n\t *  Selection attributes hi \n\t */ \n");
             Main_class mc = new Main_class();
 
-            // Class Result
+            // Sushil - Class Result
             writer.print("\n\t /** \n\t *  This result set class stores only the attributes in selection attribute \n\t */ \n");
             writer.print("\tpublic class Result{\n");
             for (String str : mc.getSelect()) {
@@ -64,11 +66,11 @@ public class MFCode {
             }
             writer.print("\t}\n");
 
-            // generate f-vect and groupby attributes
+            //Sushil - generate f-vect and groupby attributes
             writer.print("\n\t /** \n\t * f-vect attributes \n\t * and group by attribues \n\t */ \n");
             List<String> added_elements = new ArrayList<String>();
 
-            // Class MF_Structure
+            // Sushil - Class MF_Structure
             writer.print("\n\t /** \n\t * Contains all the required attributes that needs to be computed \n\t */ \n");
             writer.print("\tpublic class MF_Structure{\n");
             //writing logic for creating [datatype groupByVariableName] for each groupby in groupbyList
@@ -104,7 +106,8 @@ public class MFCode {
                 }
             }
             writer.print("\t}\n");
-            // Writing the main method of the output file.
+
+            // Narmit - Writing the main method of the output file.
             writer.print("\n\t /** \n\t * The Main method \n\t */ \n");
             writer.print("\tpublic static void main(String [] args){\n");
 
@@ -118,12 +121,17 @@ public class MFCode {
             writer.print("\t\t}\n");
 
             //writing the methods we want to run in sequence --- logic for these will be written below
+            writer.print("\t\tlong start = System.currentTimeMillis();\n");//logic to calculate runtime of our algorithm
             writer.print("\t\tmf.retrive();\n\n");
             writer.print("\t\tmf.addToOutput();\n\n");
             writer.print("\t\tmf.outputTable();\n");
+            writer.print("\t\tlong end = System.currentTimeMillis();\n");
+            writer.print("\t\tlong time = end-start;\n");
+            writer.print("\t\tSystem.out.println();\n");
+            writer.print("\t\tSystem.out.println(\"Time taken in milliseconds : \" + time);\n");
             writer.print("\t}\n");
 
-            // Execution of main logic of the code
+            //Sushil - Execution of main logic of the code
             writer.print("\n\t /** \n\t * Logic to establish connection to Data Base \n\t * executing Single scan (SELECT * FROM SALES) and retriving  \n\t * Storing in Data Set if it satisfies the condition in MF Query \n\t \n\t */ \n");
             writer.print("\tpublic void retrive(){\n");
             writer.print("\t\ttry {\n");
@@ -154,11 +162,12 @@ public class MFCode {
             writer.print("\t\t\tResult result = new Result();\n");
             for (String str : mc.getGroupby())
                 writer.print("\t\t\t\tresult." + str + " = ms." + str + ";\n");
+            //Narmit - handling if having condition is false
             writer.print("\t\t\tif(");
             // Declaring variable to set to true if the second having condition exists
             boolean isSecondHaving = false;
 
-            // Putting the having condition in the output file for filtering the output.
+            //Narmit -  Putting the having condition in the output file for filtering the output.
             if (mc.getSizeHaving() != 0) {
                 for (String str : mc.getHaving()) {
                     if (str.contains("sum"))
@@ -180,10 +189,12 @@ public class MFCode {
                         writer.print(" && (" + str + ")");
                 }
             }
-            // If there is no having condition put "true".
+            //Narmit -  If there is no having condition put "true".
             else
                 writer.print("true");
             writer.print("){\n");
+
+            //Sushil - saving the result
             for (String str : mc.getSelect()) {
                 for (GroupVariable gv : mc.getFvect()) {
                     if (str.equals(gv.getString())) {
@@ -198,7 +209,7 @@ public class MFCode {
             writer.print("\t\t}\n");
             writer.print("\t}\n");
 
-            // Generate method to print output
+            //Narmit - Generate method to print output
             writer.print("\n\t /** \n\t * This method will create format for outputting the data table. \n\t */ \n");
             int length;
             writer.print("\tpublic void outputTable(){\n");
