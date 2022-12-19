@@ -18,8 +18,14 @@ import java.util.HashMap;
 public class Schema {
     //Saving Authentication info to connect to DB
     private static final String username = "postgres";
+
+    // sushil
     private static final String password = "CS562";
     private static final String url = "jdbc:postgresql://localhost:5432/salesdb";
+
+    // narmit
+    // private static final String password = "admin";
+    // private static final String url = "jdbc:postgresql://localhost:5432/postgres";
 
     //To store the column data along with its datatype in a hashMap
     private static HashMap<String, String> dataType = new HashMap<String, String>();

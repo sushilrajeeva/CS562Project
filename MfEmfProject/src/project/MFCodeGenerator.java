@@ -42,9 +42,15 @@ public class MFCodeGenerator {
             //Narmit - creating main class
             writer.print("public class MFOutput {\n");
             writer.print("\t//Variables to connect to DB\n");
-            writer.print("\tprivate static final String username = \"postgres\";\n"
-                    + "	private static final String password = \"CS562\";\n"
-                    + "	private static final String url = \"jdbc:postgresql://localhost:5432/salesdb\";\n");
+            // sushil
+           writer.print("\tprivate static final String username = \"postgres\";\n"
+                   + "	private static final String password = \"CS562\";\n"
+                   + "	private static final String url = \"jdbc:postgresql://localhost:5432/salesdb\";\n");
+
+            // narmit
+            // writer.print("\tprivate static final String username = \"postgres\";\n"
+            //         + "	private static final String password = \"admin\";\n"
+            //         + "	private static final String url = \"jdbc:postgresql://localhost:5432/postgres\";\n");
 
             writer.print("\t//Variables to generate the output\n");
             writer.print("\tList<MF_Structure> mfStructureList = new ArrayList<MF_Structure>();\n");

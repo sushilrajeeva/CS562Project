@@ -122,8 +122,14 @@ public class EMFCodeGenerator {
             // Output main class
             writer.print("class EMFOutput {\n");
             writer.print("\tString username =\"postgres\";\n");
-            writer.print("\tString password =\"CS562\";\n");
-            writer.print("\tString url = \"jdbc:postgresql://localhost:5432/salesdb\";\n");
+            // sushil
+           writer.print("\tString password =\"CS562\";\n");
+           writer.print("\tString url = \"jdbc:postgresql://localhost:5432/salesdb\";\n");
+
+            // narmit
+            // writer.print("\tString password =\"admin\";\n");
+            // writer.print("\tString url = \"jdbc:postgresql://localhost:5432/postgres\";\n");
+
             // private static final String url="jdbc:postgres://localhost:51314/project";
             writer.print("\tArrayList<MF_structure> result_list = new ArrayList<MF_structure>();\n");
 
