@@ -1,7 +1,5 @@
 package project;
 
-
-import java.io.PrintWriter;
 import java.sql.*;
 import java.util.HashMap;
 
@@ -10,11 +8,16 @@ import java.util.HashMap;
  * gets schema of the Database in use
  * outputs the column names and their JAVA equivalent datatype
  */
-public class Schema {
+public class DB_Schema {
     //Authentication info
     private static final String username = "postgres";
-    private static final String password = "CS562";
-    private static final String url = "jdbc:postgresql://localhost:5432/salesdb";
+    // sushil
+    // private static final String password = "CS562";
+    // private static final String url = "jdbc:postgresql://localhost:5432/salesdb";
+    // narmit
+    private static final String password = "admin";
+    private static final String url = "jdbc:postgresql://localhost:5432/postgres";
+
 
     //To store the column data along with its datatype in a hashMap
     private static HashMap<String, String> dataType = new HashMap<String, String>();

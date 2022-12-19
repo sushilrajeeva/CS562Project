@@ -11,17 +11,18 @@ import java.util.Map;
  * MFCode class to generate MF.java file
  *
  */
-public class MFCode {
+public class MF_Query_Complier {
 
     /**
      * First method of the code, where execution begins
+     * This generates the output file. It calls AlgorithmMFLoop method which does the looping
      *
      * @param dataType
      */
-    public static void codeMF(HashMap<String, String> dataType) {
+    public static void GenerateMF(HashMap<String, String> dataType) {
         try {
             //Writing logic to create a file
-            File output = new File("src/project/MF.java");
+            File output = new File("MfEmfProject/src/project/MF_Output.java");
             System.out.println("New MF Output file generated successfully!!");
             PrintWriter writer = new PrintWriter(output);
 
@@ -29,12 +30,21 @@ public class MFCode {
             writer.print("package project;\n");
             writer.print("import java.sql.*;\n");
             writer.print("import java.util.*;\n");
+            // adding authors
+            writer.print("// Authors - Sushil Bhandary & Narmit Mashruwala\n");
             // creating main class
-            writer.print("public class MF {\n");
+            writer.print("public class MF_Output {\n");
             writer.print("\t//Variables to connect to DB\n");
+
+            // sushil
+//            writer.print("\tprivate static final String usr = \"postgres\";\n"
+//                    + "	private static final String pwd = \"CS562\";\n"
+//                    + "	private static final String url = \"jdbc:postgresql://localhost:5432/salesdb\";\n");
+
+            // narmit
             writer.print("\tprivate static final String usr = \"postgres\";\n"
-                    + "	private static final String pwd = \"CS562\";\n"
-                    + "	private static final String url = \"jdbc:postgresql://localhost:5432/salesdb\";\n");
+                    + "	private static final String pwd = \"admin\";\n"
+                    + "	private static final String url = \"jdbc:postgresql://localhost:5432/postgres\";\n");
 
             writer.print("\t//Variables to generate the output\n");
             writer.print("\tList<Result> output_attributes = new ArrayList<Result>();\n");
@@ -50,12 +60,12 @@ public class MFCode {
 
             // Generating select attributes
             writer.print("\n\t /** \n\t *  Selection attributes hi \n\t */ \n");
-            Main_class mc = new Main_class();
+            Main_App mp = new Main_App();
 
             // Class Result
             writer.print("\n\t /** \n\t *  This result set class stores only the attributes in selection attribute \n\t */ \n");
             writer.print("\tpublic class Result{\n");
-            for (String str : mc.getSelect()) {
+            for (String str : mp.getSelect()) {
                 if (dataType.get(str) != null) {
                     writer.print("\t\t" + dataType.get(str) + " " + str + ";\n");
                 } else {
@@ -72,13 +82,13 @@ public class MFCode {
             writer.print("\n\t /** \n\t * Contains all the required attributes that needs to be computed \n\t */ \n");
             writer.print("\tpublic class MF_Structure{\n");
             //writing logic for creating [datatype groupByVariableName] for each groupby in groupbyList
-            for (String groupByItem : mc.getGroupby()) {
+            for (String groupByItem : mp.getGroupby()) {
                 for (Map.Entry<String, String> entry : dataType.entrySet())
                     if (groupByItem.equals(entry.getKey()))
                         writer.print("\t\t" + entry.getValue() + " " + entry.getKey() + ";\n");
             }
             //writing logic to handle avg - sum - count and creating variable names for the same
-            for (GroupVariable groupVariable : mc.getFvect()) {
+            for (GroupVariable groupVariable : mp.getFvect()) {
                 if (groupVariable.aggregate.equals("avg")) {
                     String sum = "sum_" + groupVariable.attribute + "_" + groupVariable.index;
                     String count = "count_" + groupVariable.attribute + "_" + groupVariable.index;
@@ -135,7 +145,7 @@ public class MFCode {
             writer.print("\t\t\tString query = \"select * from sales\";\n");
             writer.print("\n");
             //using AlgorithmMFLoop Funciton which contains the main logic for filtering the retrived data according to MF Query condition
-            AlgorithmMFLoop(writer, mc, dataType);
+            AlgorithmMFLoop(writer, mp, dataType);
             writer.print("\t\t}catch(Exception e) {\n");
             writer.print("\t\t\te.printStackTrace();\n");
             writer.print("\t\t}\n");
@@ -152,15 +162,15 @@ public class MFCode {
             writer.print("\tpublic void addToOutput(){\n");
             writer.print("\t\tfor(MF_Structure ms: mfStruct){\n");
             writer.print("\t\t\tResult result = new Result();\n");
-            for (String str : mc.getGroupby())
+            for (String str : mp.getGroupby())
                 writer.print("\t\t\t\tresult." + str + " = ms." + str + ";\n");
             writer.print("\t\t\tif(");
             // Declaring variable to set to true if the second having condition exists
             boolean isSecondHaving = false;
 
             // Putting the having condition in the output file for filtering the output.
-            if (mc.getSizeHaving() != 0) {
-                for (String str : mc.getHaving()) {
+            if (mp.getSizeHaving() != 0) {
+                for (String str : mp.getHaving()) {
                     if (str.contains("sum"))
                         str = str.replace("sum", "ms.sum");
                     if (str.contains("max"))
@@ -184,8 +194,8 @@ public class MFCode {
             else
                 writer.print("true");
             writer.print("){\n");
-            for (String str : mc.getSelect()) {
-                for (GroupVariable gv : mc.getFvect()) {
+            for (String str : mp.getSelect()) {
+                for (GroupVariable gv : mp.getFvect()) {
                     if (str.equals(gv.getString())) {
                         writer.print("\t\t\t\tresult." + gv.getString() + " = ms." + gv.getString() + ";\n");
                     }
@@ -203,13 +213,13 @@ public class MFCode {
             int length;
             writer.print("\tpublic void outputTable(){\n");
 
-            for (String str : mc.getSelect()) {
+            for (String str : mp.getSelect()) {
                 length = str.length();
                 writer.print("\t\tSystem.out.printf(\"%-" + length + "s\",\"" + str + "\\t\");\n");
             }
             writer.print("\t\tSystem.out.printf(\"\\n\");\n");
             writer.print("\t\tSystem.out.printf(\"");
-            for (String str : mc.getSelect()) {
+            for (String str : mp.getSelect()) {
                 length = str.length();
                 for (int i = 0; i < length; i++) {
                     writer.print("=");
@@ -219,8 +229,8 @@ public class MFCode {
             writer.print(" \");\n");
             writer.print("\t\tfor(Result ra: output_attributes){\n");
             writer.print("\t\t\tSystem.out.printf(\"\\n\");\n");
-            for (String str : mc.getSelect()) {
-                for (String str1 : mc.getGroupby()) {
+            for (String str : mp.getSelect()) {
+                for (String str1 : mp.getGroupby()) {
                     if (str.equals(str1)) {
                         length = str.length();
                         if (str.equals("month") || str.equals("year") || str.equals("days") || str.equals("quant")) {
@@ -231,7 +241,7 @@ public class MFCode {
 
                     }
                 }
-                for (GroupVariable fv : mc.getFvect()) {
+                for (GroupVariable fv : mp.getFvect()) {
                     if (str.equals(fv.getString())) {
                         length = str.length();
                         writer.print("\t\t\tSystem.out.printf(\"%" + length + "s\\t\", ra." + str + ");\n");
@@ -258,14 +268,14 @@ public class MFCode {
      * @param mc
      * @param dataType
      */
-    private static void AlgorithmMFLoop(PrintWriter writer, Main_class mc, HashMap<String, String> dataType) {
+    private static void AlgorithmMFLoop(PrintWriter writer, Main_App mp, HashMap<String, String> dataType) {
         // TODO Auto-generated method stub
         List<String> added_elements = new ArrayList<String>();
         List<String> updated_elements = new ArrayList<String>();
 
         // Generating number of while loops equal to number of Grouping variables.
         writer.print("\n\t\t\t /** \n\t\t\t * Generating while loops for each grouping variable. \n\t\t\t */ \n");
-        for (int i = 0; i < mc.getNumber(); i++) {
+        for (int i = 0; i < mp.getNumber(); i++) {
             writer.print("\n\t\t\t//While loop for grouping variable " + (i + 1) + ".\n");
             writer.print("\t\t\tresult_set = st.executeQuery(query);\n");
             writer.print("\t\t\tmore = result_set.next();\n");
@@ -295,8 +305,8 @@ public class MFCode {
                 This logic handles all the valid where clause conditions
                 "<=", ">=", "==", ">", "<", "!="
              */
-            if (mc.getSizeWhere() != 0) {
-                for (String str : mc.getWhere()) {
+            if (mp.getSizeWhere() != 0) {
+                for (String str : mp.getWhere()) {
                     str = str.replace(" ", "");
                     if (str.contains("<=") || str.contains(">=") || str.contains(">") || str.contains("<")
                             || str.contains("!=")) {
@@ -343,7 +353,7 @@ public class MFCode {
             // Putting the such that conditions if any.
             not = false;
             writer.print("\t\t\t\t\tif (");
-            for (SuchThat such_that : mc.getSuchthat()) {
+            for (SuchThat such_that : mp.getSuchthat()) {
                 not = false;
                 String str = such_that.getAttribute();
                 str = str.replace(" ", "");
@@ -386,7 +396,7 @@ public class MFCode {
             writer.print("\t\t\t\t\t\tfor(MF_Structure row: mfStruct){\n");
             boolean isSecondGroupByVariable = false;
             writer.print("\t\t\t\t\t\t\tif(compare(row.");
-            for (String str : mc.getGroupby()) {
+            for (String str : mp.getGroupby()) {
                 if (isSecondGroupByVariable == false) {
                     writer.print(str + ",currentRow." + str + ")");
                     isSecondGroupByVariable = true;
@@ -399,7 +409,7 @@ public class MFCode {
             writer.print("\t\t\t\t\t\t\t\tfound = true;\n");
 
             // Outputting the aggregate functions if record is added already.
-            for (GroupVariable gv : mc.getFvect()) {
+            for (GroupVariable gv : mp.getFvect()) {
                 if (Integer.parseInt(gv.index) == i + 1) {
                     if (gv.aggregate.equals("avg")) {
                         String sum = "sum_" + gv.attribute + "_" + gv.index;
@@ -450,10 +460,10 @@ public class MFCode {
             // If record is found for the first time - i.e no record in mfStruct
             writer.print("\t\t\t\t\t\tif(found == false){\n");
             writer.print("\t\t\t\t\t\t\tMF_Structure addCurrentRow = new MF_Structure();\n");
-            for (String str : mc.getGroupby()) {
+            for (String str : mp.getGroupby()) {
                 writer.print("\t\t\t\t\t\t\taddCurrentRow." + str + " = currentRow." + str + ";\n");
             }
-            for (GroupVariable gv : mc.getFvect()) {
+            for (GroupVariable gv : mp.getFvect()) {
                 if (Integer.parseInt(gv.index) == i + 1) {
                     if (gv.aggregate.equals("avg")) {
                         String sum = "sum_" + gv.attribute + "_" + gv.index;
