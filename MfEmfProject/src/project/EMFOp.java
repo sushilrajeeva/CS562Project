@@ -30,24 +30,43 @@ class MF_structure{
 	int	count_quant_3;
 	int	sum_quant_4;
 	int	count_quant_4;
+	String formatName(String name){
+		Integer maxLen = 20;
+		Integer len = name.length();
+		Integer difference = maxLen - len;
+		for(int i=0; i<=difference; i++){
+			 name+= ' ';
+		}
+		 return name + '|';
+}
+	String formatName(Integer number){
+		String numStr = number.toString();
+		Integer maxLen = 20;
+		Integer len = numStr.length();
+		Integer difference = maxLen - len - 2;
+		for(int i=0; i<=difference; i++){
+			 numStr = ' ' + numStr;
+		}
+		 return numStr + "  |";
+}
 	void output(){
-		System.out.printf("\t"+cust);
+		System.out.printf("\t"+formatName(cust));
 		if (count_quant_1 == 0)
-			System.out.printf("\t0");
+			System.out.printf("\t "+formatName(0));
 		else
-			System.out.printf("\t"+sum_quant_1/count_quant_1);
+			System.out.printf("\t"+formatName(sum_quant_1/count_quant_1));
 		if (count_quant_2 == 0)
-			System.out.printf("\t0");
+			System.out.printf("\t "+formatName(0));
 		else
-			System.out.printf("\t"+sum_quant_2/count_quant_2);
+			System.out.printf("\t"+formatName(sum_quant_2/count_quant_2));
 		if (count_quant_3 == 0)
-			System.out.printf("\t0");
+			System.out.printf("\t "+formatName(0));
 		else
-			System.out.printf("\t"+sum_quant_3/count_quant_3);
+			System.out.printf("\t"+formatName(sum_quant_3/count_quant_3));
 		if (count_quant_4 == 0)
-			System.out.printf("\t0");
+			System.out.printf("\t "+formatName(0));
 		else
-			System.out.printf("\t"+sum_quant_4/count_quant_4);
+			System.out.printf("\t"+formatName(sum_quant_4/count_quant_4));
 		System.out.printf("\n");
 	}
 }

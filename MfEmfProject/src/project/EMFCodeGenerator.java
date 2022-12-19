@@ -51,35 +51,58 @@ public class EMFCodeGenerator {
                 } else
                     writer.print("\t" + dataType.get(value.attribute) + "\t" + value.getString() + ";\n");
             }
+
+            //logic for formating the output
+            writer.print("\tString formatName(String name){\n");
+            writer.print("\t\tInteger maxLen = 20;\n");
+            writer.print("\t\tInteger len = name.length();\n");
+            writer.print("\t\tInteger difference = maxLen - len;\n");
+            writer.print("\t\tfor(int i=0; i<=difference; i++){\n");
+            writer.print("\t\t\t name+= ' ';\n");
+            writer.print("\t\t}\n");
+            writer.print("\t\t return name + '|';\n");
+            writer.print("}\n");
+
+            writer.print("\tString formatName(Integer number){\n");
+            writer.print("\t\tString numStr = number.toString();\n");
+            writer.print("\t\tInteger maxLen = 20;\n");
+            writer.print("\t\tInteger len = numStr.length();\n");
+            writer.print("\t\tInteger difference = maxLen - len - 2;\n");
+            writer.print("\t\tfor(int i=0; i<=difference; i++){\n");
+            writer.print("\t\t\t numStr = ' ' + numStr;\n");
+            writer.print("\t\t}\n");
+            writer.print("\t\t return numStr + \"  |\";\n");
+            writer.print("}\n");
+
             writer.print("\tvoid output(){\n");
             boolean found = false;
             for (String value : mainProject.getGroupby()) {
                 if (found == false) {
-                    writer.print("\t\tSystem.out.printf(\"\\t\"+" + value + ");\n");
+                    writer.print("\t\tSystem.out.printf(\"\\t\"+" +"formatName(" + value + ")" +");\n");
                     found = true;
                 } else if (found == true)
-                    writer.print("\t\tSystem.out.printf(\"\\t\"+" + value + ");\n");
+                    writer.print("\t\tSystem.out.printf(\"\\t\"+" +"formatName(" + value + ")" +");\n");
             }
 
             for (GroupVariable value : mainProject.getFvect()) {
                 if (value.aggregate.equals("avg")) {
                     writer.print("\t\tif (count_" + value.attribute + "_" + value.index + " == 0)\n");
-                    writer.print("\t\t\tSystem.out.printf(\"\\t0\");\n");
+                    writer.print("\t\t\tSystem.out.printf(\"\\t \""+ "+formatName("+ 0 +")"+");\n");
                     writer.print("\t\telse\n");
-                    writer.print("\t\t\tSystem.out.printf(\"\\t\"+sum_" + value.attribute + "_" + value.index
-                            + "/count_" + value.attribute + "_" + value.index + ");\n");
+                    writer.print("\t\t\tSystem.out.printf(\"\\t\"+formatName(sum_" + value.attribute + "_" + value.index
+                            + "/count_" + value.attribute + "_" + value.index + "));\n");
                 } else if (value.aggregate.equals("max")) {
                     writer.print("\t\tif (" + value.getString() + " == 0)\n");
-                    writer.print("\t\t\tSystem.out.printf(\"\\t0\");\n");
+                    writer.print("\t\t\tSystem.out.printf(\"\\t \"+"+ "+formatName("+ 0 +")"+");\n");
                     writer.print("\t\telse\n");
-                    writer.print("\t\t\tSystem.out.printf(\"\\t\"+" + value.getString() + ");\n");
+                    writer.print("\t\t\tSystem.out.printf(\"\\t\"+" + "+formatName(" +value.getString() +")" + ");\n");
                 } else if (value.aggregate.equals("min")) {
                     writer.print("\t\tif (" + value.getString() + " == Integer.MAX_VALUE)\n");
-                    writer.print("\t\t\tSystem.out.printf(\"\\t0\");\n");
+                    writer.print("\t\t\tSystem.out.printf(\"\\t \"+"+ "+formatName("+ 0 +")"+");\n");
                     writer.print("\t\telse\n");
-                    writer.print("\t\t\tSystem.out.printf(\"\\t\"+" + value.getString() + ");\n");
+                    writer.print("\t\t\tSystem.out.printf(\"\\t\"+" + "+formatName(" +value.getString() +")" + ");\n");
                 } else
-                    writer.print("\t\tSystem.out.printf(\"\\t\"+" + value.getString() + ");\n");
+                    writer.print("\t\t\tSystem.out.printf(\"\\t\"+" + "+formatName(" +value.getString() +")" + ");\n");
             }
             writer.print("\t\tSystem.out.printf(\"\\n\");\n");
             writer.print("\t}\n");
