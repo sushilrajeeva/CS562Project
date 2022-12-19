@@ -13,7 +13,9 @@ import java.util.Map;
  */
 public class EMFCodeGenerator {
     public static void EMFCode(HashMap<String, String> dataType) {
+        String heading = "";
         try {
+
 
             MainProject mainProject = new MainProject();
             File output = new File("src/project/EMFOp.java");
@@ -39,16 +41,25 @@ public class EMFCodeGenerator {
 
             // Generate MF Structure Class
             writer.print("class MF_structure{\n");
-            for (String value : mainProject.getGroupby())
+
+            for (String value : mainProject.getGroupby()) {
+                if(heading==""){
+                    heading+=value;
+                }else{
+                    heading+="-"+value;
+                }
                 writer.print("\t" + dataType.get(value) + "\t" + value + ";\n");
+            }
 
             for (GroupVariable value : mainProject.getFvect()) {
                 if (value.aggregate.equals("avg")) {
+                    heading+="-avg_"+value.attribute+"_"+value.index;
                     writer.print("\t" + dataType.get(value.attribute) + "\tsum_" + value.attribute + "_" + value.index
                             + ";\n");
                     writer.print("\t" + dataType.get(value.attribute) + "\tcount_" + value.attribute + "_" + value.index
                             + ";\n");
                 } else
+                    heading+="-"+value.getString();
                     writer.print("\t" + dataType.get(value.attribute) + "\t" + value.getString() + ";\n");
             }
 
@@ -348,6 +359,7 @@ public class EMFCodeGenerator {
         writer.print("\t\t}\n");
         writer.print("\t}\n");
         writer.print("\tvoid output(){\n");
+        //writer.print("\t\t"+"String heading = " +"\""+heading+"\"" +";\n");
         writer.print("\t\tfor (MF_structure temp : result_list)\n");
         writer.print("\t\t\ttemp.output();\n");
         writer.print("\t}\n");

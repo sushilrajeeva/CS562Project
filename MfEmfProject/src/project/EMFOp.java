@@ -24,12 +24,16 @@ class MF_structure{
 	String	cust;
 	int	sum_quant_1;
 	int	count_quant_1;
+	int	avg_quant_1;
 	int	sum_quant_2;
 	int	count_quant_2;
+	int	avg_quant_2;
 	int	sum_quant_3;
 	int	count_quant_3;
+	int	avg_quant_3;
 	int	sum_quant_4;
 	int	count_quant_4;
+	int	avg_quant_4;
 	String formatName(String name){
 		Integer maxLen = 20;
 		Integer len = name.length();
