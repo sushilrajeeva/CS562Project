@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
-public class Main_App {
+public class Main_class {
 
     // Declaring the DataStructures for phi operator
     public static HashMap<String, String> dataType = new HashMap<String, String>();
@@ -220,10 +220,10 @@ public class Main_App {
 
     public static void main(String args[]) {
         File input;
-        Main_App code = new Main_App();
+        Main_class code = new Main_class();
         code.connect();
 
-        dataType = DB_Schema.getSchema();
+        dataType = Schema.getSchema();
 
         //Displaying the schema of the database
         System.out.println("The datatype of the given sales table: " + dataType);
@@ -245,7 +245,7 @@ public class Main_App {
 
                 System.out.println("Please Select the file number associated with your MFQuery input !");
                 Integer inputQueryNum = in.nextInt();
-                String Str = "MfEmfProject/Inputs/MFQuery"+inputQueryNum+".txt";
+                String Str = "Inputs/MFQuery"+inputQueryNum+".txt";
                 input = new File(Str);
                 code.addArguments(input);
 
@@ -276,7 +276,7 @@ public class Main_App {
                 System.out.println("getSize of having clause:");
                 System.out.println(code.getSizeHaving());
 
-                MF_Query_Complier.GenerateMF(dataType);
+                MFCode.codeMF(dataType);
 
                 System.out.println("Generation Successful");
                 System.out.println("\n\n");
@@ -327,7 +327,7 @@ public class Main_App {
 
                 // START CODE
                 // GroupVariable gv = new GroupVariable();
-                EMF_Query_Complier.codeEMF(dataType);
+                EMFCode.codeEMF(dataType);
 
                 // END CODE
 
