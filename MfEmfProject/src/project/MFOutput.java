@@ -1,19 +1,23 @@
 package project;
+/**
+ * Sushil Rajeeva Bhandary - 20015528
+ * Narmit Mashruwala - 20011284
+ * */
 import java.sql.*;
 import java.util.*;
-public class MF {
+public class MFOutput {
 	//Variables to connect to DB
-	private static final String usr = "postgres";
-	private static final String pwd = "CS562";
+	private static final String username = "postgres";
+	private static final String password = "CS562";
 	private static final String url = "jdbc:postgresql://localhost:5432/salesdb";
 	//Variables to generate the output
-	List<Result> output_attributes = new ArrayList<Result>();
-	List<MF_Structure> mfStruct = new ArrayList<MF_Structure>();
+	List<MF_Structure> mfStructureList = new ArrayList<MF_Structure>();
+	List<Result> outputAttributeList = new ArrayList<Result>();
 
 	 /** 
 	 * This class contains the DB schema 
 	 */ 
-	public class DBStruct{
+	public class DB_Structure{
 		String prod;
 		int month;
 		int year;
@@ -32,13 +36,9 @@ public class MF {
 	 */ 
 	public class Result{
 		String cust;
-		String prod;
-		int sum_quant_1;
-		int sum_quant_2;
-		int sum_quant_3;
-		int count_month_1;
-		int count_month_2;
-		int count_month_3;
+		int avg_quant_1;
+		int avg_quant_2;
+		int avg_quant_3;
 	}
 
 	 /** 
@@ -51,13 +51,15 @@ public class MF {
 	 */ 
 	public class MF_Structure{
 		String cust;
-		String prod;
 		int sum_quant_1;
+		int count_quant_1;
+		int avg_quant_1;
 		int sum_quant_2;
+		int count_quant_2;
+		int avg_quant_2;
 		int sum_quant_3;
-		int count_month_1;
-		int count_month_2;
-		int count_month_3;
+		int count_quant_3;
+		int avg_quant_3;
 	}
 
 	 /** 
@@ -65,7 +67,7 @@ public class MF {
 	 */ 
 	public static void main(String [] args){
 
-		MF mf = new MF();
+		MFOutput mfOutput = new MFOutput();
 		try {
 			Class.forName("org.postgresql.Driver");
 			System.out.println("Success loading Driver!");
@@ -73,11 +75,11 @@ public class MF {
 		exception.printStackTrace();
 		}
 		long start = System.currentTimeMillis();
-		mf.retrive();
+		mfOutput.retrive();
 
-		mf.addToOutput();
+		mfOutput.addToOutput();
 
-		mf.outputTable();
+		mfOutput.outputTable();
 		long end = System.currentTimeMillis();
 		long time = end-start;
 		System.out.println();
@@ -92,10 +94,10 @@ public class MF {
 	 */ 
 	public void retrive(){
 		try {
-			Connection con = DriverManager.getConnection(url, usr, pwd);
+			Connection connection = DriverManager.getConnection(url, username, password);
 			ResultSet result_set;
-			boolean more;
-			Statement st = con.createStatement();
+			boolean isNext;
+			Statement statement = connection.createStatement();
 			String query = "select * from sales";
 
 
@@ -104,10 +106,10 @@ public class MF {
 			 */ 
 
 			//While loop for grouping variable 1.
-			result_set = st.executeQuery(query);
-			more = result_set.next();
-			while(more){
-				DBStruct currentRow = new DBStruct();
+			result_set = statement.executeQuery(query);
+			isNext = result_set.next();
+			while(isNext){
+				DB_Structure currentRow = new DB_Structure();
 				currentRow.prod = result_set.getString("prod");
 				currentRow.month = result_set.getInt("month");
 				currentRow.year = result_set.getInt("year");
@@ -116,33 +118,38 @@ public class MF {
 				currentRow.day = result_set.getInt("day");
 				currentRow.cust = result_set.getString("cust");
 				if(true){
-					if (currentRow.state.equals("PA")){
+					if (currentRow.state.equals("NY")){
 						boolean found = false;
-						for(MF_Structure row: mfStruct){
-							if(compare(row.cust,currentRow.cust) && compare(row.prod,currentRow.prod)){
+						for(MF_Structure row: mfStructureList){
+							if(compare(row.cust,currentRow.cust)){
 								found = true;
 								row.sum_quant_1 += currentRow.quant;
-								row.count_month_1++;
+								row.count_quant_1 ++;
+								if(row.count_quant_1 !=0){
+									row.avg_quant_1 = row.sum_quant_1/row.count_quant_1;
+								}
 							}
 						}
 						if(found == false){
 							MF_Structure addCurrentRow = new MF_Structure();
 							addCurrentRow.cust = currentRow.cust;
-							addCurrentRow.prod = currentRow.prod;
 							addCurrentRow.sum_quant_1 = currentRow.quant;
-							addCurrentRow.count_month_1++;
-							mfStruct.add(addCurrentRow);
+							addCurrentRow.count_quant_1++;
+							if(addCurrentRow.count_quant_1 !=0){
+								addCurrentRow.avg_quant_1 = addCurrentRow.sum_quant_1/addCurrentRow.count_quant_1;
+							}
+							mfStructureList.add(addCurrentRow);
 						}
 					}
 				}
-				more = result_set.next();
+				isNext = result_set.next();
 			}
 
 			//While loop for grouping variable 2.
-			result_set = st.executeQuery(query);
-			more = result_set.next();
-			while(more){
-				DBStruct currentRow = new DBStruct();
+			result_set = statement.executeQuery(query);
+			isNext = result_set.next();
+			while(isNext){
+				DB_Structure currentRow = new DB_Structure();
 				currentRow.prod = result_set.getString("prod");
 				currentRow.month = result_set.getInt("month");
 				currentRow.year = result_set.getInt("year");
@@ -153,31 +160,36 @@ public class MF {
 				if(true){
 					if (currentRow.state.equals("NJ")){
 						boolean found = false;
-						for(MF_Structure row: mfStruct){
-							if(compare(row.cust,currentRow.cust) && compare(row.prod,currentRow.prod)){
+						for(MF_Structure row: mfStructureList){
+							if(compare(row.cust,currentRow.cust)){
 								found = true;
 								row.sum_quant_2 += currentRow.quant;
-								row.count_month_2++;
+								row.count_quant_2 ++;
+								if(row.count_quant_2 !=0){
+									row.avg_quant_2 = row.sum_quant_2/row.count_quant_2;
+								}
 							}
 						}
 						if(found == false){
 							MF_Structure addCurrentRow = new MF_Structure();
 							addCurrentRow.cust = currentRow.cust;
-							addCurrentRow.prod = currentRow.prod;
 							addCurrentRow.sum_quant_2 = currentRow.quant;
-							addCurrentRow.count_month_2++;
-							mfStruct.add(addCurrentRow);
+							addCurrentRow.count_quant_2++;
+							if(addCurrentRow.count_quant_2 !=0){
+								addCurrentRow.avg_quant_2 = addCurrentRow.sum_quant_2/addCurrentRow.count_quant_2;
+							}
+							mfStructureList.add(addCurrentRow);
 						}
 					}
 				}
-				more = result_set.next();
+				isNext = result_set.next();
 			}
 
 			//While loop for grouping variable 3.
-			result_set = st.executeQuery(query);
-			more = result_set.next();
-			while(more){
-				DBStruct currentRow = new DBStruct();
+			result_set = statement.executeQuery(query);
+			isNext = result_set.next();
+			while(isNext){
+				DB_Structure currentRow = new DB_Structure();
 				currentRow.prod = result_set.getString("prod");
 				currentRow.month = result_set.getInt("month");
 				currentRow.year = result_set.getInt("year");
@@ -188,27 +200,32 @@ public class MF {
 				if(true){
 					if (currentRow.state.equals("CT")){
 						boolean found = false;
-						for(MF_Structure row: mfStruct){
-							if(compare(row.cust,currentRow.cust) && compare(row.prod,currentRow.prod)){
+						for(MF_Structure row: mfStructureList){
+							if(compare(row.cust,currentRow.cust)){
 								found = true;
 								row.sum_quant_3 += currentRow.quant;
-								row.count_month_3++;
+								row.count_quant_3 ++;
+								if(row.count_quant_3 !=0){
+									row.avg_quant_3 = row.sum_quant_3/row.count_quant_3;
+								}
 							}
 						}
 						if(found == false){
 							MF_Structure addCurrentRow = new MF_Structure();
 							addCurrentRow.cust = currentRow.cust;
-							addCurrentRow.prod = currentRow.prod;
 							addCurrentRow.sum_quant_3 = currentRow.quant;
-							addCurrentRow.count_month_3++;
-							mfStruct.add(addCurrentRow);
+							addCurrentRow.count_quant_3++;
+							if(addCurrentRow.count_quant_3 !=0){
+								addCurrentRow.avg_quant_3 = addCurrentRow.sum_quant_3/addCurrentRow.count_quant_3;
+							}
+							mfStructureList.add(addCurrentRow);
 						}
 					}
 				}
-				more = result_set.next();
+				isNext = result_set.next();
 			}
-		}catch(Exception e) {
-			e.printStackTrace();
+		}catch(Exception exception) {
+			exception.printStackTrace();
 		}
 	}
 
@@ -227,18 +244,14 @@ public class MF {
 	 * filtering output data if having conditions exists. 
 	 */ 
 	public void addToOutput(){
-		for(MF_Structure ms: mfStruct){
+		for(MF_Structure mfStructure: mfStructureList){
 			Result result = new Result();
-				result.cust = ms.cust;
-				result.prod = ms.prod;
+				result.cust = mfStructure.cust;
 			if(true){
-				result.sum_quant_1 = ms.sum_quant_1;
-				result.sum_quant_2 = ms.sum_quant_2;
-				result.sum_quant_3 = ms.sum_quant_3;
-				result.count_month_1 = ms.count_month_1;
-				result.count_month_2 = ms.count_month_2;
-				result.count_month_3 = ms.count_month_3;
-				output_attributes.add(result);
+				result.avg_quant_1 = mfStructure.avg_quant_1;
+				result.avg_quant_2 = mfStructure.avg_quant_2;
+				result.avg_quant_3 = mfStructure.avg_quant_3;
+				outputAttributeList.add(result);
 			}
 		}
 	}
@@ -247,27 +260,18 @@ public class MF {
 	 * This method will create format for outputting the data table. 
 	 */ 
 	public void outputTable(){
-		System.out.println("MF Query 4");
 		System.out.printf("%-4s","cust\t");
-		System.out.printf("%-4s","prod\t");
-		System.out.printf("%-11s","sum_quant_1\t");
-		System.out.printf("%-11s","sum_quant_2\t");
-		System.out.printf("%-11s","sum_quant_3\t");
-		System.out.printf("%-13s","count_month_1\t");
-		System.out.printf("%-13s","count_month_2\t");
-		System.out.printf("%-13s","count_month_3\t");
+		System.out.printf("%-11s","avg_quant_1\t");
+		System.out.printf("%-11s","avg_quant_2\t");
+		System.out.printf("%-11s","avg_quant_3\t");
 		System.out.printf("\n");
-		System.out.printf("====\t====\t===========\t===========\t===========\t=============\t=============\t=============\t ");
-		for(Result ra: output_attributes){
+		System.out.printf("====\t===========\t===========\t===========\t ");
+		for(Result result: outputAttributeList){
 			System.out.printf("\n");
-			System.out.printf("%-4s\t", ra.cust);
-			System.out.printf("%-4s\t", ra.prod);
-			System.out.printf("%11s\t", ra.sum_quant_1);
-			System.out.printf("%11s\t", ra.sum_quant_2);
-			System.out.printf("%11s\t", ra.sum_quant_3);
-			System.out.printf("%13s\t", ra.count_month_1);
-			System.out.printf("%13s\t", ra.count_month_2);
-			System.out.printf("%13s\t", ra.count_month_3);
+			System.out.printf("%-4s\t", result.cust);
+			System.out.printf("%11s\t", result.avg_quant_1);
+			System.out.printf("%11s\t", result.avg_quant_2);
+			System.out.printf("%11s\t", result.avg_quant_3);
 		}
 	}
 }

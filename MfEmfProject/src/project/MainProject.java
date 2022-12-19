@@ -1,5 +1,9 @@
 package project;
 
+/**
+ * Sushil Rajeeva Bhandary - 20015528
+ * Narmit Mashruwala - 20011284
+ * */
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -8,11 +12,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
-public class Main_class {
+public class MainProject {
 
     // Declaring the DataStructures for phi operator
     //Narmit - Creating Variables to hold data of input file
-    public static HashMap<String, String> dataType = new HashMap<String, String>();
 
     //Stores the Select attributes
     private static List<String> select = new ArrayList<String>();
@@ -35,24 +38,26 @@ public class Main_class {
     //Stores where clause conditions in this list
     private static List<String> where_condition = new ArrayList<String>();
 
+    //Stores the schema output of Sales Table that contains hashmap the column names along with its respective data_type
+    public static HashMap<String, String> dataType = new HashMap<String, String>();
+
     // Testing if we can connect to PostgreSQL
     private void connect() { //Narmit - to establish connection
         try {
             Class.forName("org.postgresql.Driver");
             System.out.println("Driver connected successfully!");
 
-        } catch (Exception e) {
-            System.out.println("Driver loading Failed!");
-            e.printStackTrace();
+        } catch (Exception exception) {
+            System.out.println("Oops!! Driver loading has failed!");
+            exception.printStackTrace();
         }
     }
 
     /**
      * adding arguments of phi operator to the data structures
-     *
      * @param input
      */
-    public void addArguments(File input) { // Narmit - handles logic of taking input file data and storing it in our userdefined java variables
+    public void addPhiArguments(File input) { // Narmit - handles logic of taking input file data and storing it in our userdefined java variables
 
         //adding try catch for handling errors
         try {
@@ -135,7 +140,7 @@ public class Main_class {
      * @param having_condition
      */
 
-    //Sushil - logic for storing data in user defined java variables
+    //Sushil - logic for storing input file data in user defined java variables
     private static void getArguments(String[] select_attributes, String[] grouping_atributes, String[] fvect,
                                      String[] select_condition, int noGV, String[] where, String[] having_condition) {
 
@@ -224,13 +229,19 @@ public class Main_class {
     //Sushil - scan the file and print the java data variables
     public static void main(String args[]) {
         File input;
-        Main_class code = new Main_class();
-        code.connect();
+        MainProject mainProject = new MainProject();
+        mainProject.connect();
 
         dataType = Schema.getSchema();
 
         //Displaying the schema of the database
-        System.out.println("The datatype of the given sales table: " + dataType);
+
+        System.out.println();
+        System.out.println("----------------------------------------------------------------------------------------");
+        System.out.println("The datatype of the given sales table: ");
+        System.out.println(dataType);
+        System.out.println("----------------------------------------------------------------------------------------");
+        System.out.println();
 
         //Asking User Input for selecting the type of Input File - i.e MF/EMF
         System.out.println("Please enter MF of EMF depending on what type of query you want to run:");
@@ -245,91 +256,96 @@ public class Main_class {
 
         try {
             if (query.equals("MF")) {
-                System.out.println("You have selected MF!");
+                System.out.println("You have selected MF Compiler!");
 
                 System.out.println("Please Select the file number associated with your MFQuery input !");
                 Integer inputQueryNum = in.nextInt();
                 String Str = "Inputs/MFQuery"+inputQueryNum+".txt";
                 input = new File(Str);
-                code.addArguments(input);
+                //calls addPhiArguments to take care the logic of populating input file variable values to its respective java variables
+                mainProject.addPhiArguments(input);
 
-                System.out.println("Select attributes:");
-                System.out.println(code.getSelect());
+                //Let's now check the result of calling the above function - the input variable values are stored in respective java variables
+                System.out.println("Select attributes (S):");
+                System.out.println(mainProject.getSelect());
 
-                System.out.println("Number of GV:");
-                System.out.println(code.getNumber());
+                System.out.println("Number of GV (n):");
+                System.out.println(mainProject.getNumber());
 
-                System.out.println("GroupBy:");
-                System.out.println(code.getGroupby());
+                System.out.println("GroupBy (V):");
+                System.out.println(mainProject.getGroupby());
 
-                System.out.println("Fvect attributes:");
-                System.out.println(code.getFvect());
+                System.out.println("Fvect attributes (F):");
+                System.out.println(mainProject.getFvect());
 
-                System.out.println("SuchThat:");
-                System.out.println(code.getSuchthat());
+                System.out.println("SuchThat (phi):");
+                System.out.println(mainProject.getSuchthat());
 
                 System.out.println("getHaving clause:");
-                System.out.println(code.getHaving());
+                System.out.println(mainProject.getHaving());
 
                 System.out.println("getWhere clause:");
-                System.out.println(code.getWhere());
+                System.out.println(mainProject.getWhere());
 
-                System.out.println("size of where:");
-                System.out.println(code.getSizeWhere());
+                System.out.println("where clause list size:");
+                System.out.println(mainProject.getSizeWhere());
 
-                System.out.println("getSize of having clause:");
-                System.out.println(code.getSizeHaving());
+                System.out.println("having clause list size:");
+                System.out.println(mainProject.getSizeHaving());
 
-                MFCode.codeMF(dataType);
+                //passing datatype containing sales table schema to the EMFCodeGenerator file that then goes on to generate a dynamic java file to execute our EMF Query
+                MFCodeGenerator.MFCode(dataType);
 
-                System.out.println("Generation Successful");
+                System.out.println("MFOutput Generated Successfully Successful!!");
                 System.out.println("\n\n");
                 System.out.println();
             } else if (query.equals("EMF")) {
-                System.out.println("You have selected EMF!");
+                System.out.println("You have selected EMF Compiler!");
                 input = new File("Inputs/EMFQuery1.txt");
-                code.addArguments(input);
+                //calls addPhiArguments to take care the logic of populating input file variable values to its respective java variables
+                mainProject.addPhiArguments(input);
 
+                //Let's now check the result of calling the above function - the input variable values are stored in respective java variables
                 System.out.println("Select");
-                System.out.println(code.getSelect());
+                System.out.println(mainProject.getSelect());
                 System.out.println("Number");
-                System.out.println(code.getNumber());
+                System.out.println(mainProject.getNumber());
                 System.out.println("GroupBy");
-                System.out.println(code.getGroupby());
+                System.out.println(mainProject.getGroupby());
                 System.out.println("Fvect");
 
                 System.out.print("[");
-                for (GroupVariable groupVariable : code.getFvect()) {
+                for (GroupVariable groupVariable : mainProject.getFvect()) {
                     System.out.print(groupVariable.getString() + " ");
                 }
                 System.out.print("]\n");
                 System.out.println("SuchThat");
 
-                for (SuchThat ak : code.getSuchthat()) {
+                for (SuchThat ak : mainProject.getSuchthat()) {
                     System.out.print(ak.getIndex()+ "_" +ak.getAttribute());
                 }
                 System.out.println("\n");
 
-                System.out.println("getHaving");
+                System.out.println("getHaving : ");
+                System.out.println(mainProject.getHaving());
 
-                System.out.println(code.getHaving());
-                System.out.println("getWhere");
+                System.out.println("getWhere : ");
+                System.out.println(mainProject.getWhere());
 
-                System.out.println(code.getWhere());
-                System.out.println("size where");
+                System.out.println("where list size");
+                System.out.println(mainProject.getSizeWhere());
 
-                System.out.println(code.getSizeWhere());
-                System.out.println("getSize");
+                System.out.println("Having list size");
+                System.out.println(mainProject.getSizeHaving());
 
-                System.out.println(code.getSizeHaving());
-                System.out.println("EMF Code Generated Successfully!");
-
+                System.out.println("EMFOutput Generated Successfully!");
                 System.out.println("\n\n");
                 System.out.println();
 
                 // START CODE
                 // GroupVariable gv = new GroupVariable();
-                EMFCode.codeEMF(dataType);
+                //passing datatype containing sales table schema to the EMFCodeGenerator file that then goes on to generate a dynamic java file to execute our EMF Query
+                EMFCodeGenerator.EMFCode(dataType);
 
                 // END CODE
 
@@ -358,6 +374,7 @@ class GroupVariable {
         this.attribute = attribute;
     }
 
+    //returns the string in aggregate_attribute_index format - example sum_quant_1
     public String getString() {
         return aggregate + "_" + attribute + "_" + index;
     }
@@ -377,12 +394,13 @@ class SuchThat {
 
     public int getIndex() {
         return index;
-    }
+    } //returns index of SuchThat object
 
     public void setIndex(int index) {
         this.index = index;
     }
 
+    //returns attribute of SuchThat object
     public String getAttribute() {
         return attribute;
     }

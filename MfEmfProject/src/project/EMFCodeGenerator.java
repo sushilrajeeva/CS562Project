@@ -1,5 +1,8 @@
 package project;
-
+/**
+ * Sushil Rajeeva Bhandary - 20015528
+ * Narmit Mashruwala - 20011284
+ * */
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.HashMap;
@@ -8,15 +11,19 @@ import java.util.Map;
 /**
  *
  */
-public class EMFCode {
-    public static void codeEMF(HashMap<String, String> dataType) {
+public class EMFCodeGenerator {
+    public static void EMFCode(HashMap<String, String> dataType) {
         try {
 
-            Main_class mc = new Main_class();
+            MainProject mainProject = new MainProject();
             File output = new File("src/project/EMFOp.java");
             PrintWriter writer = new PrintWriter(output);
 
             writer.print("package project;\n");
+            writer.print("/**\n" +
+                    " * Sushil Rajeeva Bhandary - 20015528\n" +
+                    " * Narmit Mashruwala - 20011284\n" +
+                    " * */\n");
             writer.print("import java.sql.*;\n");
             writer.print("import java.util.*;\n");
             writer.print("import java.io.*;\n");
@@ -32,10 +39,10 @@ public class EMFCode {
 
             // Generate MF Structure Class
             writer.print("class MF_structure{\n");
-            for (String value : mc.getGroupby())
+            for (String value : mainProject.getGroupby())
                 writer.print("\t" + dataType.get(value) + "\t" + value + ";\n");
 
-            for (GroupVariable value : mc.getFvect()) {
+            for (GroupVariable value : mainProject.getFvect()) {
                 if (value.aggregate.equals("avg")) {
                     writer.print("\t" + dataType.get(value.attribute) + "\tsum_" + value.attribute + "_" + value.index
                             + ";\n");
@@ -46,7 +53,7 @@ public class EMFCode {
             }
             writer.print("\tvoid output(){\n");
             boolean found = false;
-            for (String value : mc.getGroupby()) {
+            for (String value : mainProject.getGroupby()) {
                 if (found == false) {
                     writer.print("\t\tSystem.out.printf(\"\\t\"+" + value + ");\n");
                     found = true;
@@ -54,7 +61,7 @@ public class EMFCode {
                     writer.print("\t\tSystem.out.printf(\"\\t\"+" + value + ");\n");
             }
 
-            for (GroupVariable value : mc.getFvect()) {
+            for (GroupVariable value : mainProject.getFvect()) {
                 if (value.aggregate.equals("avg")) {
                     writer.print("\t\tif (count_" + value.attribute + "_" + value.index + " == 0)\n");
                     writer.print("\t\t\tSystem.out.printf(\"\\t0\");\n");
@@ -87,8 +94,8 @@ public class EMFCode {
             writer.print("\tArrayList<MF_structure> result_list = new ArrayList<MF_structure>();\n");
 
             // Define the aggregate function with index 0
-            if (mc.getFvect().size() > 0) {
-                for (GroupVariable value : mc.getFvect()) {
+            if (mainProject.getFvect().size() > 0) {
+                for (GroupVariable value : mainProject.getFvect()) {
                     if (value.aggregate.equals("avg")) {
                         writer.print("\t" + dataType.get(value.attribute) + "\tsum_" + value.attribute + "_"
                                 + value.index + " = 0;\n");
@@ -145,7 +152,7 @@ public class EMFCode {
     }
 
     private static void outputRetriveMethod(PrintWriter writer, HashMap<String, String> dataType) {
-        Main_class mc = new Main_class();
+        MainProject mainProject = new MainProject();
         writer.print("\tvoid retrieve(){\n");
         writer.print("\t\ttry {\n");
         writer.print("\t\tConnection con = DriverManager.getConnection(url, username, password);\n");
@@ -166,8 +173,8 @@ public class EMFCode {
             if (entry.getValue().equals("int"))
                 writer.print("\t\t\tnextrow." + entry.getKey() + " = rs.getInt(\"" + entry.getKey() + "\");\n");
         }
-        if (mc.getFvect().size() > 0) {
-            for (GroupVariable value : mc.getFvect()) {
+        if (mainProject.getFvect().size() > 0) {
+            for (GroupVariable value : mainProject.getFvect()) {
                 if (value.aggregate.equals("sum"))
                     writer.print("\t\t\t" + value.getString() + " += nextrow." + value.attribute + ";\n");
                 else if (value.aggregate.equals("max"))
@@ -187,10 +194,10 @@ public class EMFCode {
         }
         boolean flag = false;
         writer.print("\t\t\tif(");
-        if (mc.getSizeWhere() == 0)
+        if (mainProject.getSizeWhere() == 0)
             writer.print("true");
         else {
-            for (String temp : mc.getWhere()) {
+            for (String temp : mainProject.getWhere()) {
                 if (flag == false) {
                     writer.print(temp);
                     flag = true;
@@ -205,7 +212,7 @@ public class EMFCode {
         // Finding if the grouping attributes are already in the list
         writer.print("\t\t\t\t\t if(compare(temp.");
         flag = false;
-        for (String value : mc.getGroupby()) {
+        for (String value : mainProject.getGroupby()) {
             if (flag == false) {
                 writer.print(value + ",nextrow." + value + ")");
                 flag = true;
@@ -220,10 +227,10 @@ public class EMFCode {
         writer.print("\t\t\t\t}\n");
         writer.print("\t\t\t\tif (found == false){\n");
         writer.print("\t\t\t\t\tMF_structure newrow = new MF_structure();\n");
-        for (String value : mc.getGroupby())
+        for (String value : mainProject.getGroupby())
             writer.print("\t\t\t\t\tnewrow." + value + " = nextrow." + value + ";\n");
 
-        for (GroupVariable value : mc.getFvect()) {
+        for (GroupVariable value : mainProject.getFvect()) {
             if (value.aggregate.equals("avg")) {
                 writer.print("\t\t\t\t\tnewrow.sum_" + value.attribute + "_" + value.index + " = 0;\n");
                 writer.print("\t\t\t\t\tnewrow.count_" + value.attribute + "_" + value.index + " = 0;\n");
@@ -242,7 +249,7 @@ public class EMFCode {
         writer.print("\t\t}\n\n");
 
         // Generating core code
-        for (int i = 1; i <= mc.getNumber(); i++) {
+        for (int i = 1; i <= mainProject.getNumber(); i++) {
             writer.print("\t\trs = st.executeQuery(ret);\n");
             writer.print("\t\tmore=rs.next();\n");
             writer.print("\t\twhile(more){\n");
@@ -257,10 +264,10 @@ public class EMFCode {
 
             flag = false;
             writer.print("\t\t\tif(");
-            if (mc.getSizeWhere() == 0)
+            if (mainProject.getSizeWhere() == 0)
                 writer.print("true");
             else {
-                for (String value : mc.getWhere()) {
+                for (String value : mainProject.getWhere()) {
                     if (flag == false) {
                         writer.print(value);
                         flag = true;
@@ -273,7 +280,7 @@ public class EMFCode {
             writer.print("\t\t\t\tfor (MF_structure temp : result_list){\n");
 
             writer.print("\t\t\t\t\tif (");
-            for (SuchThat value : mc.getSuchthat()) {
+            for (SuchThat value : mainProject.getSuchthat()) {
                 if (value.index == i && flag == false) {
                     flag = true;
                     writer.print(value.attribute);
@@ -284,7 +291,7 @@ public class EMFCode {
                 writer.print("true");
             flag = false;
             writer.print("){\n");
-            for (GroupVariable value : mc.getFvect()) {
+            for (GroupVariable value : mainProject.getFvect()) {
                 if (Integer.parseInt(value.index) == i) {
                     if (value.aggregate.equals("avg")) {
                         writer.print("\t\t\t\t\t\ttemp.sum_" + value.attribute + "_" + value.index + " += nextrow."
